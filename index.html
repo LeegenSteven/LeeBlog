@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>李金城 · Lee Jincheng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;600&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1218;
+    --bg3: #161b24;
+    --line: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent: #4af0c4;
+    --accent2: #f0a64a;
+    --red: #f05a4a;
+    --card: rgba(255,255,255,0.03);
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+    --cn: 'Noto Serif SC', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--cn);
+    font-weight: 300;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(74,240,196,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.3s, height 0.3s;
+  }
+  body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 14px; height: 14px; background: var(--accent2); }
+  body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 50px; height: 50px; border-color: rgba(240,166,74,0.5); }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(20px);
+    background: rgba(10,12,16,0.8);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10rem 4rem 6rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(4rem, 7vw, 7.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+  .hero-name-en {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.65s forwards;
+  }
+  .hero-desc {
+    font-size: 1rem;
+    color: rgba(232,234,240,0.7);
+    max-width: 420px;
+    line-height: 1.9;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.95s forwards;
+  }
+  .pill {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 2rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.1s forwards;
+  }
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 0.85rem 2rem;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-outline {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 0.85rem 2rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text);
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero-visual {
+    position: relative;
+    width: 380px; height: 380px;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 1s forwards;
+  }
+  .hero-orbit {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(74,240,196,0.1);
+    border-radius: 50%;
+    animation: spin 20s linear infinite;
+  }
+  .hero-orbit:nth-child(2) {
+    inset: 30px;
+    border-color: rgba(240,166,74,0.08);
+    animation-duration: 30s;
+    animation-direction: reverse;
+  }
+  .hero-orbit:nth-child(3) {
+    inset: 80px;
+    border-color: rgba(240,90,74,0.06);
+    animation-duration: 15s;
+  }
+  .orbit-dot {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    top: -3px; left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .orbit-dot-2 {
+    background: var(--accent2);
+    box-shadow: 0 0 12px var(--accent2);
+    top: auto;
+    bottom: -3px;
+  }
+  .hero-center-box {
+    position: absolute;
+    inset: 80px;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg3);
+    gap: 0.5rem;
+  }
+  .hero-center-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .hero-center-stat {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    color: var(--accent);
+  }
+
+  /* Grid lines in background */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.5s forwards;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateX(-100%);
+    animation: scanLine 2s ease-in-out infinite;
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 5rem;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    margin-left: auto;
+    max-width: 300px;
+    align-self: center;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    padding: 10rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 6rem;
+    align-items: start;
+  }
+  .about-text p {
+    font-size: 1.05rem;
+    line-height: 2;
+    color: rgba(232,234,240,0.8);
+    margin-bottom: 1.5rem;
+  }
+  .about-text p strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .stat-cell {
+    background: var(--bg2);
+    padding: 2rem;
+    transition: background 0.2s;
+  }
+  .stat-cell:hover { background: var(--bg3); }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 3rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .about-quote {
+    grid-column: 1 / -1;
+    margin-top: 3rem;
+    padding: 2.5rem 3rem;
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(232,234,240,0.6);
+    line-height: 2;
+  }
+
+  /* ── RESEARCH ── */
+  #research {
+    padding: 10rem 0;
+    border-top: 1px solid var(--line);
+    background: var(--bg2);
+  }
+  .research-card {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .research-card:hover { border-color: rgba(74,240,196,0.3); }
+  .research-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .research-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    min-height: 360px;
+  }
+  .research-meta {
+    padding: 3.5rem;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .research-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .research-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .research-name {
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .research-period {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .research-body {
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .research-desc {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: rgba(232,234,240,0.7);
+    margin-bottom: 2rem;
+  }
+  .research-modules {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  .module-item {
+    padding: 1.2rem;
+    border: 1px solid var(--line);
+    background: var(--card);
+    transition: all 0.2s;
+  }
+  .module-item:hover {
+    border-color: var(--accent);
+    background: rgba(74,240,196,0.03);
+  }
+  .module-name {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .module-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .research-result {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    background: rgba(74,240,196,0.06);
+    border: 1px solid rgba(74,240,196,0.2);
+  }
+  .result-icon {
+    font-size: 1.5rem;
+  }
+  .result-text {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    line-height: 1.5;
+  }
+  .result-num {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience {
+    padding: 10rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .exp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 4rem;
+    padding: 3.5rem 0;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .exp-item:first-child { border-top: 1px solid var(--line); }
+  .exp-item:hover { background: var(--card); }
+  .exp-left {
+    padding-top: 0.2rem;
+  }
+  .exp-period {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+  .exp-company {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+  .exp-industry {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  /* .exp-right {} */
+  .exp-role {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+  .exp-duties {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .exp-duties li {
+    font-size: 0.92rem;
+    color: rgba(232,234,240,0.65);
+    line-height: 1.7;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  .exp-duties li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
+  /* ── EDUCATION ── */
+  #education {
+    padding: 10rem 0;
+    border-top: 1px solid var(--line);
+    background: var(--bg2);
+  }
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--line);
+  }
+  .edu-card {
+    background: var(--bg);
+    padding: 3.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .edu-card:hover { background: var(--bg3); }
+  .edu-degree {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .edu-school {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+  .edu-dept {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  .edu-meta {
+    display: flex;
+    gap: 2.5rem;
+  }
+  /* .edu-meta-item {} */
+  .edu-meta-val {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .edu-meta-key {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .edu-period {
+    position: absolute;
+    top: 3.5rem;
+    right: 3.5rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── SKILLS ── */
+  #skills {
+    padding: 10rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--line);
+    margin-bottom: 5rem;
+  }
+  .skill-group {
+    background: var(--bg);
+    padding: 3rem;
+    transition: background 0.2s;
+  }
+  .skill-group:hover { background: var(--bg3); }
+  .skill-group-title {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--text);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .skill-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(74,240,196,0.05); }
+  .skill-tag.highlight { border-color: rgba(74,240,196,0.4); color: var(--accent); }
+
+  /* ── AWARDS ── */
+  .awards-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--line);
+  }
+  .award-item {
+    background: var(--bg);
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .award-item:hover { background: var(--bg3); }
+  .award-date {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .award-name {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .award-level {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .award-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+  .award-item:hover::before { background: var(--accent); }
+
+  /* ── PROJECT ── */
+  #projects {
+    padding: 10rem 0;
+    border-top: 1px solid var(--line);
+    background: var(--bg2);
+  }
+  .project-card {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .project-card:hover { border-color: rgba(74,240,196,0.3); }
+  .project-left {
+    padding: 4rem;
+    border-right: 1px solid var(--line);
+    background: var(--bg3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .project-title {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .project-sub {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    margin-top: 2rem;
+    transition: gap 0.2s;
+  }
+  .project-link:hover { gap: 0.8rem; }
+  .project-right {
+    padding: 4rem;
+  }
+  .project-desc {
+    font-size: 0.95rem;
+    color: rgba(232,234,240,0.7);
+    line-height: 1.9;
+    margin-bottom: 2.5rem;
+  }
+  .project-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .feature-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--line);
+    transition: border-color 0.2s;
+  }
+  .feature-row:hover { border-color: rgba(74,240,196,0.2); }
+  .feature-icon {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    width: 70px;
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+  .feature-text {
+    font-size: 0.88rem;
+    color: rgba(232,234,240,0.65);
+    line-height: 1.6;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    padding: 10rem 0 6rem;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-bg-text {
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--serif);
+    font-size: 18vw;
+    color: rgba(255,255,255,0.02);
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .contact-heading {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 5rem);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+  .contact-sub {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 3.5rem;
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+  }
+  .contact-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: none;
+  }
+  .contact-link-icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+  }
+  .contact-link-type {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .contact-link-val {
+    font-size: 0.88rem;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .contact-link:hover .contact-link-val { color: var(--accent); }
+
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .footer-made {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .footer-made span { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  @keyframes scanLine {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* Active nav link */
+  .nav-links a.active { color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    .nav-links { gap: 1.5rem; }
+    #hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 9rem 2rem 3rem; }
+    .hero-right { display: none; }
+    .container { padding: 0 2rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .research-inner { grid-template-columns: 1fr; }
+    .research-meta { border-right: none; border-bottom: 1px solid var(--line); }
+    .exp-item { grid-template-columns: 1fr; gap: 1rem; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .awards-list { grid-template-columns: 1fr 1fr; }
+    .project-card { grid-template-columns: 1fr; }
+    .project-left { border-right: none; border-bottom: 1px solid var(--line); }
+    .research-modules { grid-template-columns: 1fr 1fr; }
+    .section-line { display: none; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    .awards-list { grid-template-columns: 1fr; }
+    .edu-meta { gap: 1.5rem; }
+    .research-modules { grid-template-columns: 1fr; }
+    .hero-cta { flex-direction: column; }
+    .hero-cta a { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#hero" class="nav-logo">LJC · 李金城</a>
+  <ul class="nav-links">
+    <li><a href="#about">简介</a></li>
+    <li><a href="#research">研究</a></li>
+    <li><a href="#experience">经历</a></li>
+    <li><a href="#education">教育</a></li>
+    <li><a href="#skills">技能</a></li>
+    <li><a href="#contact">联系</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-left">
+    <div class="hero-tag">/ 软件工程 · 系统研究 · 安全</div>
+    <h1 class="hero-name">李金城</h1>
+    <p class="hero-name-en">Lee Jincheng</p>
+    <p class="hero-desc">
+      电子科技大学硕士在读，专注于强化学习与系统安全的交叉研究。
+      用代码度量复杂性，用算法逼近真实。
+    </p>
+    <div class="hero-pills">
+      <span class="pill">强化学习</span>
+      <span class="pill">Java 后端</span>
+      <span class="pill">系统安全</span>
+      <span class="pill">RL</span>
+      <span class="pill">分布式系统</span>
+      <span class="pill">自监督学习</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#research" class="btn-primary">查看研究</a>
+      <a href="#contact" class="btn-outline">联系我</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-orbit"><div class="orbit-dot"></div></div>
+      <div class="hero-orbit"><div class="orbit-dot orbit-dot-2"></div></div>
+      <div class="hero-orbit"></div>
+      <div class="hero-center-box">
+        <span class="hero-center-label">GPA</span>
+        <span class="hero-center-stat">3.9</span>
+        <span class="hero-center-label">研究生阶段</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    向下滚动
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">关于我</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          我是一个相信<strong>工程严谨性</strong>与<strong>算法创造力</strong>可以共存的研究者。
+          本科就读于电子科技大学信息与软件工程学院，现升入本校硕士，方向为系统技术。
+        </p>
+        <p>
+          我的研究兴趣集中在将强化学习方法应用于安全领域的实际问题上——
+          特别是口令生成与文本猜测。我独立设计并实现了 <strong>FeatureGuess</strong> 框架，
+          通过模块化自监督奖励学习，在主流基准上取得了显著超越现有模型的猜测效果。
+        </p>
+        <p>
+          工程侧，我有 Java 后端开发实习经历，
+          参与过区县级政府数据平台的搭建与运维，也参与过小程序的全栈开发。
+          我享受从零构建系统的过程，也善于在已有代码中快速定位问题。
+        </p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div class="about-stats">
+          <div class="stat-cell">
+            <div class="stat-num">4.0</div>
+            <div class="stat-label">硕士 GPA</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">Top<br>10%</div>
+            <div class="stat-label">成绩排名</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">5+</div>
+            <div class="stat-label">奖项荣誉</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">CET<br>-6</div>
+            <div class="stat-label">英语水平</div>
+          </div>
+        </div>
+      </div>
+      <blockquote class="about-quote reveal">
+        "坚毅不拔，吃苦耐劳，喜欢迎接新挑战——
+        对工作积极认真，细心负责，善于在工作中发现问题、分析问题、解决问题。"
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESEARCH ── -->
+<section id="research">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">学术研究</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="research-card reveal">
+      <div class="research-inner">
+        <div class="research-meta">
+          <div>
+            <div class="research-tag">独立研究 · 毕业设计</div>
+            <h3 class="research-name">Feature<br>Guess</h3>
+            <p class="research-period">2024.12 — 2025.06</p>
+          </div>
+          <div>
+            <p style="font-size:0.85rem; color:var(--muted); line-height:1.7; margin-bottom:1rem;">
+              基于强化学习的口令文本猜测框架，
+              将多维度密码特征外化为可学习的奖励信号。
+            </p>
+            <a href="https://github.com/LeegenSteven/FeaturePSM.git" target="_blank" class="project-link">
+              ↗ GitHub 查看
+            </a>
+          </div>
+        </div>
+        <div class="research-body">
+          <p class="research-desc">
+            真实口令行为呈现出两个互补侧面：局部相似性（围绕少量"专家密码"做变体）与全局分布（频率和结构呈高度偏态与文化差异）。
+            FeatureGuess 将"与真实口令接近"的可度量侧面外化为学习信号，在共享的生成与训练协议下系统比较其约束效果。
+          </p>
+          <div class="research-modules">
+            <div class="module-item">
+              <div class="module-name">Similarity</div>
+              <div class="module-desc">基于对比学习，捕获局部模式变体的相似度奖励器</div>
+            </div>
+            <div class="module-item">
+              <div class="module-name">Distribution</div>
+              <div class="module-desc">基于 VAE 建模整体统计结构的分布奖励器</div>
+            </div>
+            <div class="module-item">
+              <div class="module-name">Hybrid</div>
+              <div class="module-desc">融合二者优势的混合奖励器，微调生成器参数</div>
+            </div>
+          </div>
+          <div class="research-result">
+            <div class="result-icon">⚡</div>
+            <div class="result-text">
+              实验结果：平均超越现有主流模型
+              <span class="result-num"> 5–10%</span> 的猜测命中率
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="insights" style="padding: 10rem 0; border-top: 1px solid var(--line);">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">个人学习之外的思考</h2>
+      <div class="section-line"></div>
+    </div>
+    
+    <div class="skills-grid reveal" style="grid-template-columns: repeat(2, 1fr);">
+      
+      <div class="skill-group">
+        <div class="skill-group-title">人工智能</div>
+        <p class="module-desc" style="margin-bottom: 1.5rem;">《AI的理解》：探讨算法本质与机器认知的边界。</p>
+        <a href="https://zhuanlan.zhihu.com/p/21466966532" target="_blank" class="project-link">阅读全文 ↗</a>
+      </div>
+      
+      <div class="skill-group">
+        <div class="skill-group-title">行业发展</div>
+        <p class="module-desc" style="margin-bottom: 1.5rem;">《发展理解》：关于技术与个人成长路径的阶段性思考。</p>
+        <a href="https://zhuanlan.zhihu.com/p/2002356399959738321" target="_blank" class="project-link">阅读全文 ↗</a>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPERIENCE ── -->
+<section id="experience">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">工作经历</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="exp-list">
+      <div class="exp-item reveal">
+        <div class="exp-left">
+          <span class="exp-period">2024.02 — 2024.07</span>
+          <div class="exp-company">中科信息</div>
+          <div class="exp-industry">互联网 / 软件</div>
+        </div>
+        <div class="exp-right">
+          <h3 class="exp-role">Java 后端开发工程师</h3>
+          <ul class="exp-duties">
+            <li>参与项目需求调研，梳理区县政府数据平台业务流程</li>
+            <li>了解并掌握区县政府数据平台的业务需求与技术实现</li>
+            <li>参与微信小程序及软件后端模块开发</li>
+            <li>对已有平台进行日常运维与性能优化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal reveal-delay-1">
+        <div class="exp-left">
+          <span class="exp-period">2023.07 — 2023.08</span>
+          <div class="exp-company">成华区教育局</div>
+          <div class="exp-industry">公共事业 / 政府</div>
+        </div>
+        <div class="exp-right">
+          <h3 class="exp-role">技装科助理</h3>
+          <ul class="exp-duties">
+            <li>负责程序软件开发，优化网络教研平台功能</li>
+            <li>设计并实现自动化抽签系统，提高行政效率</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal reveal-delay-2">
+        <div class="exp-left">
+          <span class="exp-period">2022.09 — 2023.06</span>
+          <div class="exp-company">综合设计 · 社团</div>
+          <div class="exp-industry">学生组织</div>
+        </div>
+        <div class="exp-right">
+          <h3 class="exp-role">项目组长</h3>
+          <ul class="exp-duties">
+            <li>设计并开发分布式文件系统，基于 RMI 通信框架</li>
+            <li>实现文件分块持久化到本地、多线程并发上传下载</li>
+            <li>使用 Java 原生 I/O 流完成底层数据传输</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EDUCATION ── -->
+<section id="education">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">教育经历</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <div class="edu-degree">Master · 硕士</div>
+        <span class="edu-period">2025.09 — 2028.06</span>
+        <h3 class="edu-school">电子科技大学</h3>
+        <p class="edu-dept">软件工程学院 · 系统技术方向</p>
+        <div class="edu-meta">
+          <div class="edu-meta-item">
+            <div class="edu-meta-val">3.9</div>
+            <div class="edu-meta-key">GPA</div>
+          </div>
+          <div class="edu-meta-item">
+            <div class="edu-meta-val">前10%</div>
+            <div class="edu-meta-key">成绩排名</div>
+          </div>
+        </div>
+      </div>
+      <div class="edu-card reveal reveal-delay-1">
+        <div class="edu-degree">Bachelor · 本科</div>
+        <span class="edu-period">2021.09 — 2025.06</span>
+        <h3 class="edu-school">电子科技大学</h3>
+        <p class="edu-dept">信息与软件工程学院</p>
+        <div class="edu-meta">
+          <div class="edu-meta-item">
+            <div class="edu-meta-val">3.91</div>
+            <div class="edu-meta-key">GPA</div>
+          </div>
+          <div class="edu-meta-item">
+            <div class="edu-meta-val">前20%</div>
+            <div class="edu-meta-key">成绩排名</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">06</span>
+      <h2 class="section-title">技能 & 荣誉</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-grid reveal">
+      <div class="skill-group">
+        <div class="skill-group-title">后端 & 系统</div>
+        <div class="skill-tags">
+          <span class="skill-tag highlight">Java</span>
+          <span class="skill-tag highlight">Spring Boot</span>
+          <span class="skill-tag">分布式系统</span>
+          <span class="skill-tag">RMI</span>
+          <span class="skill-tag">多线程</span>
+          <span class="skill-tag">MySQL</span>
+          <span class="skill-tag">微信小程序</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">机器学习 & 算法</div>
+        <div class="skill-tags">
+          <span class="skill-tag highlight">Python</span>
+          <span class="skill-tag highlight">强化学习</span>
+          <span class="skill-tag highlight">对比学习</span>
+          <span class="skill-tag">VAE</span>
+          <span class="skill-tag">自监督学习</span>
+          <span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">文本生成</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">工具 & 其他</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Git / GitHub</span>
+          <span class="skill-tag">Linux</span>
+          <span class="skill-tag">英语 CET-6</span>
+          <span class="skill-tag">系统运维</span>
+          <span class="skill-tag">篮球</span>
+          <span class="skill-tag">健身</span>
+          <span class="skill-tag">音乐</span>
+        </div>
+      </div>
+    </div>
+
+<div class="awards-list reveal">
+  
+  <div class="award-item">
+    <div class="award-date">2025.09</div>
+    <div class="award-name">研究生推荐免试<br>优秀学生奖学金</div>
+    <div class="award-level">一等奖</div>
+  </div>
+  
+  <div class="award-item">
+    <div class="award-date">2024.12</div>
+    <div class="award-name">优秀学生奖学金</div>
+    <div class="award-level">校级</div>
+  </div>
+  
+  <div class="award-item">
+    <div class="award-date">2024.03</div>
+    <div class="award-name">好创意数字设计大赛</div>
+    <div class="award-level">国家二等奖</div>
+  </div>
+  
+  <div class="award-item">
+    <div class="award-date">2023.10</div>
+    <div class="award-name">学生标兵奖学金</div>
+    <div class="award-level">校级</div>
+  </div>
+  
+  <div class="award-item">
+    <div class="award-date">2022.10</div>
+    <div class="award-name">优秀学生奖学金</div>
+    <div class="award-level">校级</div>
+  </div>
+  
+  <div class="award-item">
+    <div class="award-date">本科期间</div>
+    <div class="award-name">电子科技大学“成电杯”<br>“信达杯”篮球联赛冠军</div>
+    <div class="award-level">
+      <a href="https://sport.uestc.edu.cn/info/1063/2755.htm" target="_blank" style="color: var(--accent2); text-decoration: none;">[冠军合影]</a> 
+      <a href="https://sise.uestc.edu.cn/info/1017/10407.htm" target="_blank" style="color: var(--accent2); text-decoration: none;">[新闻报道]</a>
+    </div>
+  </div>
+  
+  <div class="award-item">
+    <div class="award-date">研究生期间</div>
+    <div class="award-name">IEEExtreme极限编程大赛<br>全球12%，国家三等奖</div>
+    <div class="award-level">
+      <a href="#" target="_blank" style="color: var(--accent2); text-decoration: none;"></a> 
+      <a href="#" target="_blank" style="color: var(--accent2); text-decoration: none;"></a>
+    </div>
+  </div>
+
+  <div class="award-item">
+    <div class="award-date">Under Review</div>
+    <div class="award-name">KAPG: Adaptive Password Guessing via Knowledge-Augmented Generation</div>
+    <div class="award-level">
+      TIFS (CCF-A) 在投
+      <a href="https://arxiv.org/abs/2510.23036" target="_blank" style="color: var(--accent2); text-decoration: none; margin-left: 0.3rem;">[arXiv链接]</a>
+    </div>
+  </div>
+
+  <div class="award-item">
+    <div class="award-date">Under Review</div>
+    <div class="award-name">Bridging Short and Long Password Spaces: The LongGuess Framework for Sparse Password Modeling</div>
+    <div class="award-level">
+      TDSC (CCF-A) 在投
+    </div>
+  </div>
+  
+  <div class="award-item" style="background: var(--bg3); grid-column: 1 / -1; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 2rem 3rem;">
+    <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+      <div class="award-date" style="color: var(--accent);">Status: In Progress</div>
+      <div class="award-name" style="font-size: 1.1rem; color: rgba(232,234,240,0.85);">保持技术敏锐，探索更多可能</div>
+    </div>
+    <div style="font-family: var(--mono); font-size: 1.5rem; color: rgba(255,255,255,0.1); letter-spacing: 0.2em;">
+      >_ Keep_Going
+    </div>
+  </div>
+
+</div>
+
+  </div>
+</section>
+
+<!-- ── PROJECTS ── -->
+<section id="projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">06</span>
+      <h2 class="section-title">作品展示</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-left">
+        <div>
+          <h3 class="project-title">Feature<br>PSM</h3>
+          <p class="project-sub">Vibe Coding · 密码强度检测</p>
+        </div>
+        <a href="https://github.com/LeegenSteven/FeaturePSM.git" class="project-link" target="_blank">
+          ↗ 查看源码
+        </a>
+      </div>
+      <div class="project-right">
+        <p class="project-desc">
+          这是我以 vibe coding 方式构建的一个前端插件，可以嵌入网页，实时动态检测用户正在输入的密码强度——
+          填补了许多网站不提供此类反馈的空白。后台将 FeatureGuess 算法部署于服务器，
+          为前端评估提供智能模型支撑。
+        </p>
+        <div class="project-features">
+          <div class="feature-row">
+            <div class="feature-icon">FRONT</div>
+            <div class="feature-text">网页嵌入式插件，实时输入检测，无感知集成到任意站点</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-icon">BACKEND</div>
+            <div class="feature-text">FeatureGuess 算法服务端部署，提供强度评分 API</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-icon">ORIGIN</div>
+            <div class="feature-text">源自毕业设计研究成果的工程化落地，研究即产品</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-label">/ 开放合作 · 欢迎联系</div>
+    <h2 class="contact-heading reveal">Let's Talk.</h2>
+    <p class="contact-sub reveal">成都 · 电子科技大学 · 随时在线</p>
+    <div class="contact-links reveal">
+      <a href="mailto:ssqq42852@gmail.com" class="contact-link">
+        <div class="contact-link-icon">✉</div>
+        <div class="contact-link-type">Email</div>
+        <div class="contact-link-val">ssqq42852@gmail.com</div>
+      </a>
+      <a href="tel:+8618111457001" class="contact-link">
+        <div class="contact-link-icon">☎</div>
+        <div class="contact-link-type">Phone</div>
+        <div class="contact-link-val">+86 181 1145 7001</div>
+      </a>
+      <a href="https://github.com/LeegenSteven/FeaturePSM.git" target="_blank" class="contact-link">
+        <div class="contact-link-icon">⌥</div>
+        <div class="contact-link-type">GitHub</div>
+        <div class="contact-link-val">LeegenSteven</div>
+      </a>
+      <a href="#" class="contact-link">
+        <div class="contact-link-icon">◎</div>
+        <div class="contact-link-type">Location</div>
+        <div class="contact-link-val">成都，中国</div>
+      </a>
+    </div>
+  </div>
+  <div class="contact-bg-text">HELLO</div>
+</section>
+
+<section id="changelog" style="padding: 5rem 0; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.8rem; color: var(--muted);">
+  <div class="container">
+    <div style="margin-bottom: 2rem; color: var(--accent);">> System.out.println("Iteration History");</div>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
+      <li><span style="color: var(--text);">[v3.1] 2026.03</span> - 引入个人深度思考(知乎)与多元背景(体育)，丰满数字孪生形象。</li>
+      <li><span style="color: var(--text);">[v3.0] 2026.02</span> - 重构交互系统，加入 IntersectionObserver 滚动监控与自定义光标。</li>
+      <li><span style="color: var(--text);">[v2.0] 2025.10</span> - 响应式重构，适配移动端阅读；模块化内容结构。</li>
+      <li><span style="color: var(--text);">[v1.0] 2025.09</span> - MVP 上线：纯静态 HTML 部署，确立“个人简历+学术主页”核心功能。</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2025 李金城 · Lee Jincheng</div>
+  <div class="footer-made">Built with <span>attention to detail</span></div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Active nav
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const navObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => navObserver.observe(s));
+
+  // Terminal typewriter in hero tag
+  const tag = document.querySelector('.hero-tag');
+  if (tag) {
+    const text = tag.textContent;
+    tag.textContent = '';
+    let i = 0;
+    const typeInterval = setInterval(() => {
+      if (i < text.length) {
+        tag.textContent += text[i++];
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 40);
+  }
+</script>
+</body>
+</html>
